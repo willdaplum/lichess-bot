@@ -94,3 +94,10 @@ class ComboEngine(ExampleEngine):
             possible_moves.sort(key=str)
             move = possible_moves[0]
         return PlayResult(move, None, draw_offered=draw_offered)
+
+class PlumEngineTwo(ExampleEngine):
+    """Get a random move."""
+
+    def search(self, board: chess.Board, *args: HOMEMADE_ARGS_TYPE) -> PlayResult:  # noqa: ARG002
+        """Choose a random move."""
+        return PlayResult(random.choice(list(board.legal_moves)), None)
