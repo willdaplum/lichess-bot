@@ -9,6 +9,7 @@ import random
 from lib.engine_wrapper import MinimalEngine
 from lib.lichess_types import MOVE, HOMEMADE_ARGS_TYPE
 import logging
+from plum_bot2.PlumBotTwo import PlumBot
 
 
 # Use this logger variable to print messages to the console or log files.
@@ -96,8 +97,9 @@ class ComboEngine(ExampleEngine):
         return PlayResult(move, None, draw_offered=draw_offered)
 
 class PlumEngineTwo(ExampleEngine):
-    """Get a random move."""
 
     def search(self, board: chess.Board, *args: HOMEMADE_ARGS_TYPE) -> PlayResult:  # noqa: ARG002
-        """Choose a random move."""
-        return PlayResult(random.choice(list(board.legal_moves)), None)
+        """Consult plumbot."""
+        pb = PlumBot(board.turn)
+        move = pb.choose_move(board)
+        return PlayResult(move, None)

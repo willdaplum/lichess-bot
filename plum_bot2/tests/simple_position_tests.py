@@ -32,6 +32,10 @@ class TestSimpleCaptures(unittest.TestCase):
     def test_pawn_chooses_rook(self):
         self.assert_single_move("4k3/8/8/2b1r3/3P4/8/3K4/8 w - - 0 1", "4k3/8/8/2b1P3/8/8/3K4/8 b - - 0 1", chess.WHITE)
 
+    def test_take_free_pawn(self):
+        self.assert_single_move("rnbqkbnr/ppp2ppp/8/3pp3/8/P4N2/1PPPPPPP/RNBQKB1R w KQkq - 0 3", 
+                                "rnbqkbnr/ppp2ppp/8/3pN3/8/P7/1PPPPPPP/RNBQKB1R b KQkq - 0 3", chess.WHITE)
+
 
 if __name__ == '__main__':
     unittest.main()
