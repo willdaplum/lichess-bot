@@ -16,14 +16,16 @@ class PlumBot:
         differential = 0
         for square in chess.SQUARES:
             piece = board.piece_at(square)
-            if piece.color == self.color:
+            if not piece or piece.piece_type == chess.KING:
+                pass
+            elif piece.color == self.color:
                 differential += self.piece_val[piece.piece_type]
             else:
                 differential -= self.piece_val[piece.piece_type]
         return differential
 
     def choose_move(self, board):
-        legal_moves = board.legal_moves
+        legal_moves = list(board.legal_moves)
         best_move = legal_moves[0]
         best_diff = self.evaluate_position(board)
         for legal_move in legal_moves:
@@ -32,6 +34,7 @@ class PlumBot:
             if(diff > best_diff):
                 best_diff = diff
                 best_move = legal_move
+            board.pop()
         return best_move
         
 

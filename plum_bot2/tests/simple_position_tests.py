@@ -1,4 +1,4 @@
-from plum_bot2 import PlumBot
+from PlumBotTwo import PlumBot
 import chess
 import unittest
 
@@ -10,7 +10,7 @@ class TestSimpleCaptures(unittest.TestCase):
         move = pb.choose_move(board)
         board.push(move)
         correct_fen = "6k1/Q7/8/8/8/8/8/3K4 b - - 0 1"
-        self.assertEqual(board.fen, correct_fen)
+        self.assertEqual(board.fen(), correct_fen)
 
 
 if __name__ == '__main__':
