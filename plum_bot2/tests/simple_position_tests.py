@@ -7,7 +7,7 @@ class TestSimpleCaptures(unittest.TestCase):
     def assert_single_move(self, starting_fen, correct_fen, color):
         pb = PlumBot(color)
         board = chess.Board(starting_fen)
-        move = pb.choose_move(board)
+        move = pb.choose_move_depth(board, 3)
         board.push(move)
         self.assertEqual(board.fen(), correct_fen)
         
@@ -24,7 +24,7 @@ class TestSimpleCaptures(unittest.TestCase):
         self.assert_single_move("6k1/8/2n5/8/3R4/8/8/3K4 b - - 0 1", "6k1/8/8/8/3n4/8/8/3K4 w - - 0 2", chess.BLACK)
 
     def test_rook_takes_pawn(self):
-        self.assert_single_move("6k1/P3r3/8/8/8/8/8/3K4 b - - 0 1", "6k1/r7/8/8/8/8/8/3K4 w - - 0 2", chess.BLACK)
+        self.assert_single_move("6k1/P3r3/8/8/8/8/3P4/3K4 b - - 0 1", "6k1/r7/8/8/8/8/3P4/3K4 w - - 0 2", chess.BLACK)
 
     def test_queen_chooses_queen(self):
         self.assert_single_move("6k1/4q3/8/8/1N5Q/8/8/3K4 b - - 0 1", "6k1/8/8/8/1N5q/8/8/3K4 w - - 0 2", chess.BLACK)
