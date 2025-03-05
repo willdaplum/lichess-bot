@@ -48,40 +48,43 @@ class PlumBot:
         legal_moves = list(board.legal_moves)
         best_move = None
         best_diff = -math.inf
+        best_moves_to_mate = math.inf
         for legal_move in legal_moves:
             board.push(legal_move)
-            diff = self.choose_move_depth_impl(board, depth - 1)
-            # print("move:{} {} score: {}".format(chess.square_name(legal_move.from_square), 
-            #                                     chess.square_name(legal_move.to_square), diff)) 
-            if diff > best_diff or not best_move:
+            diff, to_mate = self.choose_move_depth_impl(board, depth - 1)
+            print("move:{} {} score: {}".format(chess.square_name(legal_move.from_square), 
+                                                chess.square_name(legal_move.to_square), diff))
+            if(to_mate != math.inf):
+                print("--- checkmate found! {} moves.".format(to_mate))
+            if diff > best_diff or not best_move or (diff == best_diff and to_mate < best_moves_to_mate):
                 best_diff = diff
                 best_move = legal_move
             board.pop()
         return best_move
 
-
+    # RETURNS: move_score, moves_to_checkmate (inf if not found)
     def choose_move_depth_impl(self, board, depth):
         # exit conditions
         if board.is_checkmate():
-            if board.turn == self.color:
-                # print("checkmate")
-                return math.inf
-            return -math.inf
+            if board.turn != self.color:
+                return math.inf, 0
+            return -math.inf, math.inf
         if board.is_stalemate():
-            return 0
+            return 0, math.inf
         if depth == 0:
             score = self.evaluate_position(board)
             # print("depth: {} score: {} fen: {}".format(depth, score, board.fen())) 
-            return score
+            return score, math.inf
         
         legal_moves = list(board.legal_moves)
         best_diff = math.inf # board.turn != self.color
+        best_moves_to_mate = math.inf
         if board.turn == self.color:
             best_diff = -math.inf
         
         for legal_move in legal_moves:
             board.push(legal_move)
-            diff = self.choose_move_depth_impl(board, depth - 1)
+            diff, moves_to_mate = self.choose_move_depth_impl(board, depth - 1)
             # print("depth: {} score: {} fen: {}".format(depth, diff, board.fen())) 
 
             # board.turn == self.color is the opposite of what you might expect
@@ -90,8 +93,10 @@ class PlumBot:
                 best_diff = diff
             elif board.turn == self.color and diff < best_diff:
                 best_diff = diff
+            if moves_to_mate < best_moves_to_mate:
+                best_moves_to_mate = moves_to_mate
             board.pop()
-        return best_diff
+        return best_diff, best_moves_to_mate + 1
         
         
 

@@ -101,5 +101,5 @@ class PlumEngineTwo(ExampleEngine):
     def search(self, board: chess.Board, *args: HOMEMADE_ARGS_TYPE) -> PlayResult:  # noqa: ARG002
         """Consult plumbot."""
         pb = PlumBot(board.turn)
-        move = pb.choose_move(board)
+        move = pb.choose_move_depth(board, 3)
         return PlayResult(move, None)
