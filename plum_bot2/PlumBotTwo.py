@@ -1,5 +1,6 @@
 import chess
 import math
+import random
 
 class PlumBot:
 
@@ -24,6 +25,9 @@ class PlumBot:
             else:
                 differential -= self.piece_val[piece.piece_type]
         return differential
+
+    def set_color(self, color):
+        self.color = color
 
     # REQUIRES: board.turn == self.color
     def choose_move(self, board):
@@ -51,25 +55,32 @@ class PlumBot:
         best_moves_to_mate = math.inf
         for legal_move in legal_moves:
             board.push(legal_move)
-            diff, to_mate = self.choose_move_depth_impl(board, depth - 1)
-            print("move:{} {} score: {}".format(chess.square_name(legal_move.from_square), 
+            verbose = False
+            # if legal_move == chess.Move(chess.D2, chess.D3):
+            #     verbose = True
+            diff, to_mate = self.choose_move_depth_impl(board, depth - 1, verbose)
+            '''print("move:{} {} score: {}".format(chess.square_name(legal_move.from_square), 
                                                 chess.square_name(legal_move.to_square), diff))
             if(to_mate != math.inf):
-                print("--- checkmate found! {} moves.".format(to_mate))
+                print("--- checkmate found! {} moves.".format(to_mate))'''
             if diff > best_diff or not best_move or (diff == best_diff and to_mate < best_moves_to_mate):
                 best_diff = diff
                 best_move = legal_move
+            elif diff == best_diff and random.randint(1,2) == 1:
+                best_diff = diff
+                best_move = legal_move
+
             board.pop()
         return best_move
 
     # RETURNS: move_score, moves_to_checkmate (inf if not found)
-    def choose_move_depth_impl(self, board, depth):
+    def choose_move_depth_impl(self, board, depth, verbose):
         # exit conditions
         if board.is_checkmate():
             if board.turn != self.color:
                 return math.inf, 0
             return -math.inf, math.inf
-        if board.is_stalemate():
+        if board.is_stalemate() or board.is_fivefold_repetition() or board.is_repetition() or board.is_insufficient_material():
             return 0, math.inf
         if depth == 0:
             score = self.evaluate_position(board)
@@ -84,8 +95,19 @@ class PlumBot:
         
         for legal_move in legal_moves:
             board.push(legal_move)
-            diff, moves_to_mate = self.choose_move_depth_impl(board, depth - 1)
-            # print("depth: {} score: {} fen: {}".format(depth, diff, board.fen())) 
+            new_verbose = False
+            # if legal_move == chess.Move(chess.B8, chess.C6):
+            #     new_verbose = True
+            diff, moves_to_mate = self.choose_move_depth_impl(board, depth - 1, verbose and new_verbose)
+            if verbose:
+                offset = '-'
+                if depth == 1:
+                    offset = '--' 
+                    print("{} depth: {} score: {} move:{} {}".format(offset, depth, diff, 
+                        chess.square_name(legal_move.from_square), chess.square_name(legal_move.to_square))) 
+                if depth == 2:
+                    print("{} depth: {} score: {} move:{} {}".format(offset, depth, diff, 
+                        chess.square_name(legal_move.from_square), chess.square_name(legal_move.to_square))) 
 
             # board.turn == self.color is the opposite of what you might expect
             # because board already pushed test move.

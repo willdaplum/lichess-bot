@@ -62,5 +62,11 @@ class TestMateInOne(unittest.TestCase):
     def test_mate_in_one6(self):
         self.assert_single_move("4rk2/1bp3p1/5p2/p7/2B1rN2/1P4P1/P4P1P/3R2K1 w - - 0 1", "4rk2/1bp3p1/5pN1/p7/2B1r3/1P4P1/P4P1P/3R2K1 b - - 1 1", chess.WHITE)
 
+    def test_mate_in_one7(self):
+        self.assert_single_move("5k2/8/P1P1Q3/6PP/2B5/8/R1K2p2/1N3Rq1 w - - 0 37", "5k2/5Q2/P1P5/6PP/2B5/8/R1K2p2/1N3Rq1 b - - 1 37", chess.WHITE)
+
+    def test_mate_in_one8(self):
+        self.assert_single_move("NQ1NNN2/8/8/8/2Nk1B2/1pR2B2/7R/1K6 w - - 9 75", "N2NNN2/8/8/4Q3/2Nk1B2/1pR2B2/7R/1K6 b - - 10 75", chess.WHITE)
+
 if __name__ == '__main__':
     unittest.main()
