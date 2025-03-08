@@ -59,14 +59,16 @@ class PlumBot:
             # if legal_move == chess.Move(chess.D2, chess.D3):
             #     verbose = True
             diff, to_mate = self.choose_move_depth_impl(board, depth - 1, verbose)
-            '''print("move:{} {} score: {}".format(chess.square_name(legal_move.from_square), 
-                                                chess.square_name(legal_move.to_square), diff))
-            if(to_mate != math.inf):
-                print("--- checkmate found! {} moves.".format(to_mate))'''
+            # print("move:{} {} score: {}".format(chess.square_name(legal_move.from_square), 
+            #                                     chess.square_name(legal_move.to_square), diff))
+            # if(to_mate != math.inf):
+            #     print("--- checkmate found! {} moves.".format(to_mate))
             if diff > best_diff or not best_move or (diff == best_diff and to_mate < best_moves_to_mate):
+                # print("better move, updating...")
+                best_moves_to_mate = to_mate
                 best_diff = diff
                 best_move = legal_move
-            elif diff == best_diff and random.randint(1,2) == 1:
+            elif diff == best_diff and to_mate == best_moves_to_mate and random.randint(1,2) == 1:
                 best_diff = diff
                 best_move = legal_move
 
@@ -80,7 +82,7 @@ class PlumBot:
             if board.turn != self.color:
                 return math.inf, 0
             return -math.inf, math.inf
-        if board.is_stalemate() or board.is_fivefold_repetition() or board.is_repetition() or board.is_insufficient_material():
+        if board.is_stalemate() or board.is_fivefold_repetition()  or board.is_repetition() or board.is_insufficient_material() or board.is_fifty_moves():
             return 0, math.inf
         if depth == 0:
             score = self.evaluate_position(board)
