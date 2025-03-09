@@ -58,7 +58,7 @@ class PlumBot:
             verbose = False
             # if legal_move == chess.Move(chess.D2, chess.D3):
             #     verbose = True
-            diff, to_mate = self.choose_move_depth_impl(board, depth - 1, verbose)
+            diff, to_mate = self.choose_move_depth_impl(board, depth - 1, -math.inf, math.inf, verbose)
             # print("move:{} {} score: {}".format(chess.square_name(legal_move.from_square), 
             #                                     chess.square_name(legal_move.to_square), diff))
             # if(to_mate != math.inf):
@@ -76,7 +76,9 @@ class PlumBot:
         return best_move
 
     # RETURNS: move_score, moves_to_checkmate (inf if not found)
-    def choose_move_depth_impl(self, board, depth, verbose):
+    # NOTE: alpha: best value maximizer can guarentee (plumbot)
+    #       beta: best value minimizer can guarentee (opponent simmed by plumbot)
+    def choose_move_depth_impl(self, board, depth, alpha, beta, verbose):
         # exit conditions
         if board.is_checkmate():
             if board.turn != self.color:
@@ -90,6 +92,7 @@ class PlumBot:
             return score, math.inf
         
         legal_moves = list(board.legal_moves)
+        
         best_diff = math.inf # board.turn != self.color
         best_moves_to_mate = math.inf
         if board.turn == self.color:
@@ -100,7 +103,7 @@ class PlumBot:
             new_verbose = False
             # if legal_move == chess.Move(chess.B8, chess.C6):
             #     new_verbose = True
-            diff, moves_to_mate = self.choose_move_depth_impl(board, depth - 1, verbose and new_verbose)
+            diff, moves_to_mate = self.choose_move_depth_impl(board, depth - 1, alpha, beta, verbose and new_verbose)
             if verbose:
                 offset = '-'
                 if depth == 1:
@@ -113,13 +116,19 @@ class PlumBot:
 
             # board.turn == self.color is the opposite of what you might expect
             # because board already pushed test move.
-            if board.turn != self.color and diff > best_diff:
-                best_diff = diff
-            elif board.turn == self.color and diff < best_diff:
-                best_diff = diff
+            if board.turn != self.color:
+                best_diff = max(diff, best_diff)
+                alpha = max(alpha, best_diff)
+            elif board.turn == self.color:
+                best_diff = min(diff, best_diff)
+                beta = min(beta, best_diff)
             if moves_to_mate < best_moves_to_mate:
                 best_moves_to_mate = moves_to_mate
             board.pop()
+
+            if beta <= alpha:
+                break
+
         return best_diff, best_moves_to_mate + 1
         
         

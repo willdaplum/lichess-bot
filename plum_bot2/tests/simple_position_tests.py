@@ -7,7 +7,7 @@ class TestSimpleCaptures(unittest.TestCase):
     def assert_single_move(self, starting_fen, correct_fen, color):
         pb = PlumBot(color)
         board = chess.Board(starting_fen)
-        move = pb.choose_move_depth(board, 3)
+        move = pb.choose_move_depth(board, 5)
         board.push(move)
         self.assertEqual(board.fen(), correct_fen)
         
