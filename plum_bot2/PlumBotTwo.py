@@ -44,12 +44,33 @@ class PlumBot:
                 best_move = legal_move
             board.pop()
         return best_move
+
+    def choose_move_print(self, board, depth):
+        starting_color = self.color
+        move_seq_message = "start: {} moves:".format(board.fen())
+        chosen_move = None
+        for i in range(depth, 0, -1):
+            self.set_color(board.turn)
+            move = self.choose_move_depth(board, i)
+            if not chosen_move:
+                chosen_move = move
+            move_seq_message += " {}".format(move.uci())
+            board.push(move)
+
+        self.color = starting_color
+        for i in range(0, depth):
+            board.pop()
+        print(move_seq_message)
+        return chosen_move
+
     
     # REQUIRES: board.turn == self.color
     def choose_move_depth(self, board, depth):
         assert(board.turn == self.color)
 
         legal_moves = list(board.legal_moves)
+        if len(legal_moves) == 0:
+            print("no legal moves!?")
         best_move = None
         best_diff = -math.inf
         best_moves_to_mate = math.inf
@@ -131,10 +152,3 @@ class PlumBot:
 
         return best_diff, best_moves_to_mate + 1
         
-        
-
-
-
-
-
-
