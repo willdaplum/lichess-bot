@@ -70,6 +70,7 @@ class PlumBot:
         assert(board.turn == self.color)
 
         legal_moves = list(board.legal_moves)
+        random.shuffle(legal_moves)
         if len(legal_moves) == 0:
             print("no legal moves!?")
         best_move = None
@@ -91,9 +92,6 @@ class PlumBot:
             if diff > best_diff or not best_move or (diff == best_diff and to_mate < best_moves_to_mate):
                 # print("better move, updating...")
                 best_moves_to_mate = to_mate
-                best_diff = diff
-                best_move = legal_move
-            elif diff == best_diff and to_mate == best_moves_to_mate and random.randint(1,2) == 1:
                 best_diff = diff
                 best_move = legal_move
 
