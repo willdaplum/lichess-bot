@@ -59,7 +59,7 @@ class TestChessPuzzles(unittest.TestCase):
             # TODO: implement found checkmate
             starting_eval = self.sf.get_evaluation()['value']
             for i in range(num_moves):                
-                board.push(self.pb.choose_move_depth(board, 4))
+                board.push(self.pb.choose_move_depth(board, 3))
                 self.sf.set_fen_position(board.fen())
                 sf_move = self.sf.get_best_move()
                 # TODO: doesnt include promotion

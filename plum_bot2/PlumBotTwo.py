@@ -50,6 +50,7 @@ class PlumBot:
         move_seq_message = "start: {} moves:".format(board.fen())
         chosen_move = None
         for i in range(depth, 0, -1):
+            print('- depth: {}'.format(i))
             self.set_color(board.turn)
             move = self.choose_move_depth(board, i)
             if not chosen_move:
@@ -79,8 +80,11 @@ class PlumBot:
             verbose = False
             # if legal_move == chess.Move(chess.D2, chess.D3):
             #     verbose = True
-            diff, to_mate = self.choose_move_depth_impl(board, depth - 1, -math.inf, math.inf, verbose)
-            # print("move:{} {} score: {}".format(chess.square_name(legal_move.from_square), 
+            new_depth = depth - 1
+            if board.is_capture(legal_move):
+                new_depth = depth
+            diff, to_mate = self.choose_move_depth_impl(board, new_depth, -math.inf, math.inf, verbose)
+            # print("-- move:{} {} score: {}".format(chess.square_name(legal_move.from_square), 
             #                                     chess.square_name(legal_move.to_square), diff))
             # if(to_mate != math.inf):
             #     print("--- checkmate found! {} moves.".format(to_mate))
