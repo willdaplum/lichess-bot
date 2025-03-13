@@ -98,8 +98,22 @@ class ComboEngine(ExampleEngine):
 
 class PlumEngineTwo(ExampleEngine):
 
-    def search(self, board: chess.Board, *args: HOMEMADE_ARGS_TYPE) -> PlayResult:  # noqa: ARG002
+    def search(self,
+               board: chess.Board,
+               time_limit: Limit,
+               ponder: bool,  # noqa: ARG002
+               draw_offered: bool,
+               root_moves: MOVE) -> PlayResult:  # noqa: ARG002
         """Consult plumbot."""
         pb = PlumBot(board.turn)
-        move = pb.choose_move_depth(board, 3)
+        time_left = time_limit.white_clock
+        if board.turn == chess.BLACK:
+            time_left = time_limit.black_clock
+        
+        time_scarce = False
+        if time_left < 60:
+            time_scarce = True
+            
+        move = pb.choose_move_depth(board, 3, time_scarce)
+        print(time_limit)
         return PlayResult(move, None)

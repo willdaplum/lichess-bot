@@ -66,7 +66,7 @@ class PlumBot:
 
     
     # REQUIRES: board.turn == self.color
-    def choose_move_depth(self, board, depth):
+    def choose_move_depth(self, board, depth, time_scarce):
         assert(board.turn == self.color)
 
         legal_moves = list(board.legal_moves)
@@ -82,7 +82,7 @@ class PlumBot:
             # if legal_move == chess.Move(chess.D2, chess.D3):
             #     verbose = True
             new_depth = depth - 1
-            if board.is_capture(legal_move):
+            if board.is_capture(legal_move) and not time_scarce:
                 new_depth = depth
             diff, to_mate = self.choose_move_depth_impl(board, new_depth, -math.inf, math.inf, verbose)
             # print("-- move:{} {} score: {}".format(chess.square_name(legal_move.from_square), 
