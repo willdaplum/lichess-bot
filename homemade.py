@@ -111,9 +111,8 @@ class PlumEngineTwo(ExampleEngine):
             time_left = time_limit.black_clock
         
         time_scarce = False
-        if time_left < 60:
+        if time_left and time_left < 60:
             time_scarce = True
             
         move = pb.choose_move_depth(board, 3, time_scarce)
-        print(time_limit)
         return PlayResult(move, None)
