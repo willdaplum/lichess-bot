@@ -59,7 +59,7 @@ class TestChessPuzzles(unittest.TestCase):
             # TODO: implement found checkmate
             starting_eval = self.sf.get_evaluation()['value']
             for i in range(num_moves):                
-                board.push(self.pb.choose_move_depth(board, 3))
+                board.push(self.pb.choose_move_depth(board, 3, False))
                 self.sf.set_fen_position(board.fen())
                 sf_move = self.sf.get_best_move()
                 # TODO: doesnt include promotion
@@ -75,6 +75,7 @@ class TestChessPuzzles(unittest.TestCase):
 
         # NOTE: centipawn loss is usually per single move, so maybe change?
         print("average centipawn loss: {} ({})".format(total_centipawn_loss / len(positions), test_name))
+        print("static evaluations: {}".format(self.pb.static_evaluations))
 
     def test_earlygame(self):
         self.play_stockfish("test_earlygame", self.earlygame_positions, 5)

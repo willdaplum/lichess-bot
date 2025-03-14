@@ -1,10 +1,17 @@
 import chess
 import math
 import random
+import json
+
+class PieceTable:
+    def __init__(self, from_file):
+        with open(from_file, 'r') as file:
+            self.piece_table = json.load(file)
 
 class PlumBot:
 
     def __init__(self, color):
+        self.static_evaluations = 0
         self.color = color
         self.piece_val = {
             chess.PAWN: 1,
@@ -13,21 +20,40 @@ class PlumBot:
             chess.ROOK: 5,
             chess.QUEEN: 9
         }
+        with open('piece_tables.json', 'r') as file:
+            self.piece_tables = json.load(file)
+
+    def get_game_phase(self, board):
+        if(board.fullmove_number < 10):
+            return "earlygame"
+        elif(board.fullmove_number < 30):
+            return "midgame"
+        else:
+            return "endgame"
+
 
     def evaluate_position(self, board):
-        differential = 0
+        self.static_evaluations += 1
+
+        total_differential = 0
         for square in chess.SQUARES:
             piece = board.piece_at(square)
-            if not piece or piece.piece_type == chess.KING:
-                pass
-            elif piece.color == self.color:
-                differential += self.piece_val[piece.piece_type]
-            else:
-                differential -= self.piece_val[piece.piece_type]
-        return differential
+            if piece and piece.piece_type != chess.KING:
+                color_text = "white" if piece.color == chess.WHITE else "black"
+                piece_text = chess.piece_name(piece.piece_type)
+                phase_text = self.get_game_phase(board)
+                file = chess.square_file(square)
+                rank = chess.square_rank(square)
+                piece_differential = self.piece_val[piece.piece_type] * self.piece_tables[color_text][piece_text][phase_text][file][rank]
+                if piece.color == self.color:
+                    total_differential += piece_differential
+                else:
+                    total_differential -= piece_differential
+        return total_differential
 
     def set_color(self, color):
         self.color = color
+
 
     # REQUIRES: board.turn == self.color
     def choose_move(self, board):
