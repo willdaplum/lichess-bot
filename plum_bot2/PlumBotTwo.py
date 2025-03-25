@@ -3,14 +3,10 @@ import math
 import random
 import json
 
-class PieceTable:
-    def __init__(self, from_file):
-        with open(from_file, 'r') as file:
-            self.piece_table = json.load(file)
 
 class PlumBot:
 
-    def __init__(self, color):
+    def __init__(self, color, piece_table_path='/Users/williamcooley/code/lichess-bot/plum_bot2/piece_tables_default.json'):
         self.static_evaluations = 0
         self.color = color
         self.piece_val = {
@@ -20,7 +16,8 @@ class PlumBot:
             chess.ROOK: 5,
             chess.QUEEN: 9
         }
-        with open('piece_tables.json', 'r') as file:
+        self.piece_table_path = piece_table_path
+        with open(piece_table_path, 'r') as file:
             self.piece_tables = json.load(file)
 
     def get_game_phase(self, board):
@@ -30,6 +27,19 @@ class PlumBot:
             return "midgame"
         else:
             return "endgame"
+
+    def save_piece_tables(self):
+        with open(self.piece_table_path, 'w') as file:
+            json.dump(self.piece_tables, file)
+
+    def update_piece_tables(self, piece, board, square, change):
+        if piece.piece_type != chess.KING:
+            color_text = "white" if piece.color == chess.WHITE else "black"
+            phase_text = self.get_game_phase(board)
+            piece_text = chess.piece_name(piece.piece_type)
+            file = chess.square_file(square)
+            rank = chess.square_rank(square)
+            self.piece_tables[color_text][piece_text][phase_text][rank][file] += change
 
 
     def evaluate_position(self, board):
@@ -44,7 +54,7 @@ class PlumBot:
                 phase_text = self.get_game_phase(board)
                 file = chess.square_file(square)
                 rank = chess.square_rank(square)
-                piece_differential = self.piece_val[piece.piece_type] * self.piece_tables[color_text][piece_text][phase_text][file][rank]
+                piece_differential = self.piece_val[piece.piece_type] * self.piece_tables[color_text][piece_text][phase_text][rank][file]
                 if piece.color == self.color:
                     total_differential += piece_differential
                 else:
@@ -98,6 +108,7 @@ class PlumBot:
         legal_moves = list(board.legal_moves)
         random.shuffle(legal_moves)
         if len(legal_moves) == 0:
+            print(board.fen())
             print("no legal moves!?")
         best_move = None
         best_diff = -math.inf
