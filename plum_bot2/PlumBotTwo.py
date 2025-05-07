@@ -6,7 +6,7 @@ import json
 
 class PlumBot:
 
-    def __init__(self, color, piece_table_path='./piece_tables_default.json'):
+    def __init__(self, color, piece_table_path='./plum_bot2/piece_tables.json'):
         self.static_evaluations = 0
         self.color = color
         self.piece_val = {
