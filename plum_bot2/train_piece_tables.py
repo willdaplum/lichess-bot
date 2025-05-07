@@ -4,14 +4,14 @@ import csv
 import itertools
 import stockfish
 
-piece_table_path = "/Users/williamcooley/code/lichess-bot/plum_bot2/piece_tables.json"
+piece_table_path = "./piece_tables.json"
 
 pb = PlumBot(chess.WHITE, piece_table_path)
 sf = stockfish.Stockfish()
 
-start_index = 201
-num_tests = 1000
-with open('/Users/williamcooley/code/lichess-bot/plum_bot2/positions.csv', 'r') as csvfile:
+start_index = 4201
+num_tests = 2000
+with open('./positions.csv', 'r') as csvfile:
     # print('in loop')
     reader = csv.reader(csvfile)
     header = next(reader)
